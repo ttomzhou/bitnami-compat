@@ -1,9 +1,5 @@
 name: Build
-on:
-  push:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 1 * * 5'
+on: [push]
 
 env:
   REGISTRY: ghcr.io
@@ -22,119 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-         - APP: "acmesolver"
-           REPO_OWNER: "bitnami"
-         - APP: "apache-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "bitnami-shell"
-           REPO_OWNER: "bitnami"
-         - APP: "cainjector"
-           REPO_OWNER: "bitnami"
-         - APP: "cert-manager"
-           REPO_OWNER: "bitnami"
-         - APP: "cert-manager-webhook"
-           REPO_OWNER: "bitnami"
-         - APP: "consul"
-           REPO_OWNER: "bitnami"
-         - APP: "consul-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "contour"
-           REPO_OWNER: "bitnami"
-         - APP: "contour-operator"
-           REPO_OWNER: "bitnami"
          - APP: "elasticsearch"
-           REPO_OWNER: "bitnami"
-         - APP: "elasticsearch-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "envoy"
-           REPO_OWNER: "bitnami"
-         - APP: "etcd"
-           REPO_OWNER: "bitnami"
-         - APP: "external-dns"
-           REPO_OWNER: "bitnami"
-         - APP: "fluentd"
-           REPO_OWNER: "bitnami"
-         - APP: "git"
-           REPO_OWNER: "bitnami"
-         - APP: "java"
-           REPO_OWNER: "bitnami"
-         - APP: "jmx-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "kafka"
-           REPO_OWNER: "bitnami"
-         - APP: "kafka-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "keycloak"
-           REPO_OWNER: "bitnami"
-         - APP: "keycloak-config-cli"
-           REPO_OWNER: "bitnami"
-         - APP: "kubectl"
-           REPO_OWNER: "bitnami"
-         - APP: "mariadb"
-           REPO_OWNER: "bitnami"
-         - APP: "mariadb-galera"
-           REPO_OWNER: "bitnami"
-         - APP: "memcached"
-           REPO_OWNER: "bitnami"
-         - APP: "memcached-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "minio"
-           REPO_OWNER: "bitnami"
-         - APP: "minio-client"
-           REPO_OWNER: "bitnami"
-         - APP: "mongodb"
-           REPO_OWNER: "bitnami"
-         - APP: "mongodb-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "mongodb-sharded"
-           REPO_OWNER: "bitnami"
-         - APP: "mysql"
-           REPO_OWNER: "bitnami"
-         - APP: "mysqld-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "nginx"
-           REPO_OWNER: "bitnami"
-         - APP: "nginx-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "openldap"
-           REPO_OWNER: "bitnami"
-         - APP: "pgpool"
-           REPO_OWNER: "bitnami"
-         - APP: "postgres-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "postgresql"
-           REPO_OWNER: "bitnami"
-         - APP: "postgresql-repmgr"
-           REPO_OWNER: "bitnami"
-         - APP: "rabbitmq"
-           REPO_OWNER: "bitnami"
-         - APP: "rabbitmq-cluster-operator"
-           REPO_OWNER: "bitnami"
-         - APP: "redis"
-           REPO_OWNER: "bitnami"
-         - APP: "redis-cluster"
-           REPO_OWNER: "bitnami"
-         - APP: "redis-exporter"
-           REPO_OWNER: "bitnami"
-         - APP: "redis-sentinel"
-           REPO_OWNER: "bitnami"
-         - APP: "rmq-default-credential-updater"
-           REPO_OWNER: "bitnami"
-         - APP: "rmq-messaging-topology-operator"
-           REPO_OWNER: "bitnami"
-         - APP: "sealed-secrets"
-           REPO_OWNER: "bitnami"
-         - APP: "solr"
-           REPO_OWNER: "bitnami"
-         - APP: "thanos"
-           REPO_OWNER: "bitnami"
-         - APP: "tomcat"
-           REPO_OWNER: "bitnami"
-         - APP: "wordpress"
-           REPO_OWNER: "bitnami"
-         - APP: "wordpress-nginx"
-           REPO_OWNER: "bitnami"
-         - APP: "zookeeper"
            REPO_OWNER: "bitnami"
     steps:
       - name: Checkout
@@ -149,17 +33,6 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: Log in to the container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Log in to the container registry
-        uses: docker/login-action@v2
-        with:
-          username: zcube
-          password: ${{ secrets.DOCKER_HUB_KEY }}
       - name: Extract lowercase repository name
         uses: ASzc/change-string-case-action@v1
         with:
@@ -194,21 +67,6 @@ jobs:
           until [ "$n" -ge 5 ] # retry 5 times
           do
             go run main.go build --app=${{ matrix.APP }} --tag=${{ env.REGISTRY }}/${{ steps.repository.outputs.lowercase }}/,docker.io/zcube/bitnami-compat- --cache-from --cache-to --push --platforms=linux/amd64,linux/arm64 && break
-            n=$((n+1)) 
-            sleep 15
-          done
-          if [ "$n" -ge 5 ]; then
-            echo "Failed after 5 attempts!"
-            exit 1
-          fi
-      - name: Push To Docker Hub
-        shell: bash
-        run: |
-          set -euo pipefail
-          n=0
-          until [ "$n" -ge 5 ] # retry 5 times
-          do
-            go run main.go push --app=${{ matrix.APP }} --tag=${{ env.REGISTRY }}/${{ steps.repository.outputs.lowercase }}/ --tag-to docker.io/zcube/bitnami-compat- --dest-creds=zcube:${{ secrets.DOCKER_HUB_KEY }} && break
             n=$((n+1)) 
             sleep 15
           done
