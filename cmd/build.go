@@ -79,7 +79,7 @@ var buildCmd = &cobra.Command{
 			log.Panic(err)
 		}
 
-		for i := range dockerfiles {
+		for i := range dockerfiles { 
 			emoji.Println(dockerfiles[i])
 			if appInfo, err := InspectDockerfile(dockerfiles[i]); err == nil {
 				if slices.Contains(p.Ignores, appInfo.Name) {
@@ -178,10 +178,10 @@ func init() {
 	buildCmd.PersistentFlags().StringVar(&app, "app", "", "app")
 	buildCmd.PersistentFlags().BoolVar(&cacheFrom, "cache-from", true, "cache-from")
 	buildCmd.PersistentFlags().BoolVar(&cacheTo, "cache-to", false, "cache-to")
-	buildCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "ghcr.io/zcube/bitnami-compat/", "tag")
+	buildCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "ghcr.io/ttomzhou/bitnami-compat/", "tag")
 	buildCmd.PersistentFlags().BoolVar(&push, "push", false, "push")
 	buildCmd.PersistentFlags().BoolVar(&pull, "pull", true, "pull")
-	buildCmd.PersistentFlags().StringVar(&platforms, "platforms", "linux/amd64", "platforms")
+	buildCmd.PersistentFlags().StringVar(&platforms, "platforms", "linux/arm64", "platforms")
 
 	// Here you will define your flags and configuration settings.
 
