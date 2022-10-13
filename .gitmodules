@@ -1,3 +1,3 @@
-[submodule "containers-es"]
-	path = containers-es
+[submodule "containers"]
+	path = containers
 	url = https://github.com/ttomzhou/containers.git
