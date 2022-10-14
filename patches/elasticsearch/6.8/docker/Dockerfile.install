@@ -6,12 +6,11 @@ ENV ELASTICSEARCH_VERSION 6.8.23
 
 ENV ES_JAVA_HOME=/opt/bitnami/java
 
-RUN mkdir -p /opt/bitnami \
+RUN mkdir -p /opt/bitnami/elasticsearch \
     && cd /opt/bitnami \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz.sha512 \
     && cat elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz.sha512 | sha512sum --check - \
-    && tar -xzf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
-    && mv /opt/bitnami/elasticsearch-${ELASTICSEARCH_VERSION} /opt/bitnami/elasticsearch \
+    && tar -zxvf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz -C elasticsearch --strip-components 1 \
     && rm -rf elasticsearch-${ELASTICSEARCH_VERSION}* \
     && chown 1001:1001 -R /opt/bitnami/elasticsearch
