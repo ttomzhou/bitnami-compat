@@ -14,3 +14,5 @@ RUN mkdir -p /opt/bitnami/elasticsearch \
     && tar -zxvf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz -C elasticsearch --strip-components 1 \
     && rm -rf elasticsearch-${ELASTICSEARCH_VERSION}* \
     && chown 1001:1001 -R /opt/bitnami/elasticsearch
+
+RUN  mv /opt/bitnami/elasticsearch/config/elasticsearch.yml /opt/bitnami/elasticsearch/config/es_config.sample
