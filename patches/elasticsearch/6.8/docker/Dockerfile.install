@@ -12,6 +12,6 @@ RUN mkdir -p /opt/bitnami \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz.sha512 \
     && cat elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz.sha512 | sha512sum --check - \
     && tar -xzf elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz \
-    && mv elasticsearch-${ELASTICSEARCH_VERSION}/* elasticsearch/ \
+    && cp -R elasticsearch-${ELASTICSEARCH_VERSION}/* elasticsearch/ \
     && rm -rf elasticsearch-${ELASTICSEARCH_VERSION}* \
     && chown 1001:1001 -R /opt/bitnami/elasticsearch
